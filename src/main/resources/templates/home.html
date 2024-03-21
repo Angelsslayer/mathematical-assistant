@@ -1,13 +1,67 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
     <head>
-        <title th:text="${title}"></title>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Mathematical Assistant</title>
     </head>
-
     <body>
-        <p th:text="|Hello, this is ${title}!|"></p>
-    </body>
+        <form name="equationForm" action="/submit" method="post">
+            <label>
+                <input type="radio" name="operation" value="validate" checked> Validate roots for equation
+            </label>
+            <label>
+                <input type="radio" name="operation" value="search"> Search equation by roots value
+            </label>
+            <br><br>
+            <label for="equation">Equation:</label>
+            <input type="text" id="equation" name="equation" placeholder="input the equation">
+            <div name="resultMessageEquation" th:utext="${resultMessageEquation}"></div><br>
+            <label for="root">Root:</label>
+            <input type="text" id="root" name="root" placeholder="input the root">
+            <div name="resultMessageRoot" th:utext="${resultMessageRoot}"></div><br>
+            <button type="submit" name="submit">Submit</button>
+            <div name="resultMessage" th:utext="${resultMessage}"></div>
+        </form>
+        <div name="calculatedResult"></div>
 
+        <script>
+            let radioButton = document.querySelectorAll("*[name='operation']");
+            let inputEquation = document.querySelector("*[name='equation']");
+            let formElement = document.querySelector("*[name='equationForm']");
+
+            radioButton.forEach((radioBtnElement) => {
+                radioBtnElement.addEventListener("change", () => {
+                    let checkedElement = test();
+                    disableEquation(checkedElement);
+                    updateFormAttributes(checkedElement);
+                });
+            })
+
+            function test() {
+            return document.querySelector('*[name="operation"]:checked');
+            }
+
+            function disableEquation(checkedElement) {
+                if (checkedElement.value === 'search') {
+                    inputEquation.disabled = true;
+                    inputEquation.placeholder=""
+                    inputEquation.value = '';
+                } else {
+                    inputEquation.disabled = false;
+                    inputEquation.placeholder="input the equation";
+                }
+            }
+
+            function updateFormAttributes(checkedElement) {
+                if (checkedElement.value === 'search') {
+                    formElement.action = "/search";
+                    formElement.method = "get";
+                } else {
+                    formElement.action = "/submit";
+                    formElement.method = "post";
+                }
+            }
+        </script>
+    </body>
 </html>
